@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 
-import { Button } from "@/components/ui/button";
+import RightSidePanel from "@/components/editor/rightsidepanel";
 import { useElementStore } from "@/hooks/element";
+import { useFillColorStore } from "@/hooks/fill-color";
+import { useStrokeColorStore } from "@/hooks/stroke-color";
 
 interface ElementActionProps {
     [key: string]: () => void;
@@ -12,12 +14,32 @@ interface ElementActionProps {
 const EditorPanel = () => {
     const { element, setElement } = useElementStore();
     const [history, setHistory] = useState<fabric.Object[]>([]);
+    const { fillColor, setFillColor } = useFillColorStore();
+    const { strokeColor, setStrokeColor } = useStrokeColorStore();
 
     const { editor, onReady } = useFabricJSEditor();
 
-    const addRectangle = () => {
-        editor?.addRectangle()
+    const addTriangle = () => {
+        const triangle = new fabric.Triangle({
+            width: 100,
+            height: 100,
+            fill: 'transparent',
+            stroke: 'black',
+            left: 100,
+            top: 100
+        });
+        editor?.canvas.add(triangle);
     }
+
+    useEffect(() => {
+        if (!editor) return
+        const activeObject = editor.canvas.getActiveObject();
+        if (activeObject) {
+            activeObject.set('fill', fillColor);
+            activeObject.set('stroke', strokeColor);
+            editor.canvas.renderAll();
+        }
+    }, [fillColor, strokeColor])
 
     useEffect(() => {
         if (!editor) return;
@@ -25,8 +47,9 @@ const EditorPanel = () => {
             circle: () => editor.addCircle(),
             rectangle: () => editor.addRectangle(),
             line: () => editor.addLine(),
+            triangle: () => addTriangle(),
             text: () => editor.addText("Add Text"),
-            freeform:()=>{
+            freeform: () => {
                 editor.canvas.isDrawingMode = !editor.canvas.isDrawingMode;
             },
             delete: () => {
@@ -64,11 +87,12 @@ const EditorPanel = () => {
         setElement('')
     }, [element, editor]);
     return (
-        <div className="mt-24 w-full h-full">
+        <div className="pt-24 mx-auto px-8 flex w-full h-full">
             <FabricJSCanvas
                 className="sample-canvas w-full h-full border-1 border-red-500"
                 onReady={onReady}
             />
+            <RightSidePanel />
         </div>
     )
 }

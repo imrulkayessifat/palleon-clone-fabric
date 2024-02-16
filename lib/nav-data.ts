@@ -10,9 +10,9 @@ import { FaRegSquare } from "react-icons/fa6";
 import { RxText } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
 import { FaRegCircle } from "react-icons/fa";
-import { FaArrowRotateRight,FaPaintbrush } from "react-icons/fa6";
+import { FaPaintbrush } from "react-icons/fa6";
 import { IoTriangle } from "react-icons/io5";
-import { FaGripLines, FaImage,FaUndoAlt,FaRedo } from "react-icons/fa";
+import { FaGripLines,FaUndoAlt,FaRedo } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 
 export const shapeelements: ElementProps[] = [
@@ -35,11 +35,6 @@ export const shapeelements: ElementProps[] = [
         icon: FaGripLines,
         name: "Line",
         value: "line",
-    },
-    {
-        icon: FaImage,
-        name: "Image",
-        value: "image",
     },
     {
         icon: FaPaintbrush,
