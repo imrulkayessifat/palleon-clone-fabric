@@ -50,9 +50,9 @@ const RightSidePanel = () => {
         },
     })
     return (
-        <div className='flex justify-center w-1/4 border-l-2'>
+        <div className='flex justify-center w-[200px] border-l-2'>
             <Form {...form}>
-                <form className="flex flex-col gap-2 w-3/4 space-y-1">
+                <form className="flex flex-col gap-2 w-full px-5 space-y-1">
                     <FormField
                         control={form.control}
                         name="fillcolor"
