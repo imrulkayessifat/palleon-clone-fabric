@@ -160,12 +160,16 @@ const EditorPanel = () => {
     }, [element, editor, image]);
 
     return (
-        <div className="pt-24 mx-auto px-8 flex w-full h-full">
+        <div className="pt-24 mx-auto px-8 flex justify-between w-full h-full">
+
             <FabricJSCanvas
-                className="sample-canvas w-full h-full border-1 border-red-500"
+                className="sample-canvas bg-[url('/deposite.png')] w-[650px] h-[400px]  border-1 border-red-500"
                 onReady={onReady}
             />
+
+            <div>
             <RightSidePanel />
+            </div>
         </div>
     )
 }
