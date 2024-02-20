@@ -6,40 +6,83 @@ import RightSidePanel from "@/components/editor/rightsidepanel";
 import { useElementStore } from "@/hooks/element";
 import { useFillColorStore } from "@/hooks/fill-color";
 import { useStrokeColorStore } from "@/hooks/stroke-color";
+import { useImageStore } from "@/hooks/image";
+import { useImageProperties } from "@/hooks/image-properties";
 
 interface ElementActionProps {
     [key: string]: () => void;
 }
 
 const EditorPanel = () => {
-    const { element, setElement } = useElementStore();
+
+    const { element } = useElementStore();
     const [history, setHistory] = useState<fabric.Object[]>([]);
     const { fillColor, setFillColor } = useFillColorStore();
     const { strokeColor, setStrokeColor } = useStrokeColorStore();
-
+    const { image, setImage } = useImageStore();
+    const { grayscale, brightness } = useImageProperties();
+    console.log(grayscale, brightness)
     const { editor, onReady } = useFabricJSEditor();
-
-    const addTriangle = () => {
-        const triangle = new fabric.Triangle({
-            width: 100,
-            height: 100,
-            fill: 'transparent',
-            stroke: 'black',
-            left: 100,
-            top: 100
-        });
-        editor?.canvas.add(triangle);
-    }
 
     useEffect(() => {
         if (!editor) return
         const activeObject = editor.canvas.getActiveObject();
-        if (activeObject) {
+        if (activeObject && fillColor.length > 0) {
             activeObject.set('fill', fillColor);
+            editor.canvas.renderAll();
+        }
+        if (activeObject && strokeColor.length > 0) {
             activeObject.set('stroke', strokeColor);
             editor.canvas.renderAll();
         }
+        setFillColor('')
+        setStrokeColor('')
     }, [fillColor, strokeColor])
+
+    useEffect(() => {
+        if (!editor) return;
+        const activeObject = editor.canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'image') {
+            var img = activeObject as fabric.Image;
+            var filter = new fabric.Image.filters.Brightness({
+                brightness: brightness
+            });
+
+            if (!img.filters) {
+                img.filters = [];
+            }
+
+            img.filters = img.filters.filter(filter => !(filter instanceof fabric.Image.filters.Brightness));
+
+            img.filters.push(filter);
+
+            img.applyFilters();
+            editor.canvas.renderAll();
+        }
+    }, [editor, brightness]);
+
+    useEffect(() => {
+        if (!editor) return;
+        const activeObject = editor.canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'image') {
+            var img = activeObject as fabric.Image;
+            var filter = new fabric.Image.filters.Grayscale({
+                mode: grayscale,
+                alpha: 1
+            });
+
+            if (!img.filters) {
+                img.filters = [];
+            }
+
+            img.filters = img.filters.filter(filter => !(filter instanceof fabric.Image.filters.Grayscale));
+
+            img.filters.push(filter);
+
+            img.applyFilters();
+            editor.canvas.renderAll();
+        }
+    }, [editor, grayscale]);
 
     useEffect(() => {
         if (!editor) return;
@@ -47,7 +90,36 @@ const EditorPanel = () => {
             circle: () => editor.addCircle(),
             rectangle: () => editor.addRectangle(),
             line: () => editor.addLine(),
-            triangle: () => addTriangle(),
+            triangle: () => editor.canvas.add(new fabric.Triangle({
+                width: 100,
+                height: 100,
+                fill: 'transparent',
+                stroke: 'black',
+                left: 100,
+                top: 100
+            })),
+            ellipse: () => editor.canvas.add(new fabric.Ellipse({
+                rx: 50,
+                ry: 25,
+                fill: 'transparent',
+                stroke: 'black',
+                left: 100,
+                top: 100
+            })),
+            image: () => {
+                fabric.Image.fromURL(image, function (img) {
+                    const scale = Math.min(100 / img.width!, 100 / img.height!);
+                    img.set({
+                        left: 100,
+                        top: 100,
+                        scaleX: scale,
+                        scaleY: scale
+                    });
+
+                    editor.canvas.add(img);
+                    editor.canvas.renderAll();
+                });
+            },
             text: () => editor.addText("Add Text"),
             freeform: () => {
                 editor.canvas.isDrawingMode = !editor.canvas.isDrawingMode;
@@ -84,8 +156,9 @@ const EditorPanel = () => {
             }
         };
         views[element]?.();
-        setElement('')
-    }, [element, editor]);
+        setImage('')
+    }, [element, editor, image]);
+
     return (
         <div className="pt-24 mx-auto px-8 flex w-full h-full">
             <FabricJSCanvas

@@ -9,10 +9,10 @@ import { PiCursorFill } from "react-icons/pi";
 import { FaRegSquare } from "react-icons/fa6";
 import { RxText } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
-import { FaRegCircle } from "react-icons/fa";
+import { FaRegCircle, FaImage } from "react-icons/fa";
 import { FaPaintbrush } from "react-icons/fa6";
-import { IoTriangle } from "react-icons/io5";
-import { FaGripLines,FaUndoAlt,FaRedo } from "react-icons/fa";
+import { IoTriangle, IoEllipseOutline } from "react-icons/io5";
+import { FaGripLines, FaUndoAlt, FaRedo } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 
 export const shapeelements: ElementProps[] = [
@@ -32,9 +32,19 @@ export const shapeelements: ElementProps[] = [
         value: "triangle",
     },
     {
+        icon: IoEllipseOutline,
+        name: "Ellipse",
+        value: "ellipse"
+    },
+    {
         icon: FaGripLines,
         name: "Line",
         value: "line",
+    },
+    {
+        icon: FaImage,
+        name: "Image",
+        value: "image"
     },
     {
         icon: FaPaintbrush,
@@ -65,14 +75,14 @@ export const navelements: ElementProps[] = [
         name: "Delete",
     },
     {
-        icon:FaUndoAlt,
-        value:"undo",
-        name:"Undo"
+        icon: FaUndoAlt,
+        value: "undo",
+        name: "Undo"
     },
     {
-        icon:FaRedo,
-        value:"redo",
-        name:"Redo"
+        icon: FaRedo,
+        value: "redo",
+        name: "Redo"
     },
     {
         icon: GrPowerReset,
